@@ -1,7 +1,10 @@
 # LangGraph Multi‑Agent System
 
 A production‑ready multi‑agent system built with **LangGraph**, **LangSmith**, and **Ollama**.  
-Implements a **priority‑based** multi‑agent flow (Legal → Budget → Location → Resolver) with tool integration, real‑world data (CSV), and legal veto logic. Designed to be extended with enterprise data sources and workflow automation.
+Implements a **priority‑based** multi‑agent flow (Legal → Budget → Location → Resolver) with tool integration, real‑world data (CSV), and legal veto logic.  
+
+Supports **both sequential and parallel execution** – users can choose at runtime via API.  
+Exposed as a **FastAPI** service with CORS, ready to be called from any frontend or integrated into n8n workflows (WIP).
 
 ## Architecture
 
@@ -17,16 +20,18 @@ It visually maps the path from User Query through the agents (Legal, Budget, Loc
 
 ## Features
 
-- 100% local (Ollama) or cloud models
-- Extensible data layer (CSV → API → database)
-- Clean separation of tools, prompts, orchestration
-- Ready to be wrapped in a FastAPI service and connected to n8n workflows
+- **Two execution modes** – sequential (linear chain) or parallel (concurrent specialists)
+- **FastAPI wrapper** with CORS support for web demos
+- **Performance comparison** – parallel mode reduces total time from sum to max
+- **In‑memory SQLite** for efficient property search (threshold‑based)
+- **Public demo** – exposed via ngrok (or localhost.run) with a simple HTML frontend
+- **Ready for n8n** – simple HTTP POST endpoint
 
 ## Prerequisites
-
 - Python 3.10+
-- Ollama with `phi3:mini` (or any model)
+- Ollama with `phi3:mini` (or `llama3.2:3b`)
 - (Optional) LangSmith account for tracing
+- (Optional) ngrok or localhost.run for public exposure
 
 ## Installation
 
@@ -35,10 +40,28 @@ git clone https://github.com/raj266/agentic-ai-portfolio.git
 cd agentic-ai-portfolio
 pip install -r requirements.txt
 ```
-
 ## Running the Agent
 ```bash
 python run_agent.py
+```
+
+## Running the FastAPI Service
+```bash
+python fastapi_wrapper.py
+```
+The API will be available at http://localhost:8000.
+
+## API Endpoints
+- POST /agent – accepts JSON: {"query": "...", "mode": "sequential"|"parallel"}
+Returns: {"final_answer": "...", "elapsed_time": 123.45, "mode_used": "parallel"}
+
+- GET /health – health check
+
+## Sample curl (Parallel)
+
+```curl -X POST http://localhost:8000/agent \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Find me a 3BHK in Whitefield under 5 Crore", "mode": "parallel"}'
 ```
 
 ## File Structure
