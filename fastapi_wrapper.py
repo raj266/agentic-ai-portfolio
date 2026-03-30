@@ -1,4 +1,7 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse
+import os
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
@@ -15,6 +18,14 @@ class AgentResponse(BaseModel):
     mode_used: str
 
 app = FastAPI(title="Agentic AI – Priority Multi‑Agent", version="1.0")
+
+# Mount static files (if you have CSS/JS, put them in a 'static' folder)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/", response_class=HTMLResponse)
+async def serve_frontend():
+    with open("index.html", "r") as f:
+        return f.read()
 
 # Allow CORS for all origins (for demo)
 app.add_middleware(
