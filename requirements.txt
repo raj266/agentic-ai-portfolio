@@ -1,4 +1,8 @@
+fastapi
+uvicorn
+python-multipart
+requests
 langgraph
 langsmith
-requests
+groq
 python-dotenv
