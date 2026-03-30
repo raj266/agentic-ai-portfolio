@@ -5,10 +5,7 @@ Implements a **priority‑based** multi‑agent flow (Legal → Budget → Locat
 
 ## Architecture
 
-<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/91a48953-7255-416f-8a71-e3b402b82905" />
-
 ![Architecture](arch.png)
-
 
 It visually maps the path from User Query through the agents (Legal, Budget, Location), into the Resolver, and finally down to the Final Answer with clear approval or veto outcomes.
 
