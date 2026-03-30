@@ -38,3 +38,27 @@ It visually maps the path from User Query through the agents (Legal, Budget, Loc
 git clone https://github.com/raj266/agentic-ai-portfolio.git
 cd agentic-ai-portfolio
 pip install -r requirements.txt
+```
+
+## Running the Agent
+```bash
+python run_agent.py
+```
+
+## File Structure
+`run_agent.py` – Entry point
+
+`langgraph_agent.py` – Graph definition, nodes, edges
+
+`tools.py` – CSV‑backed tools (search, legal, cost, connectivity)
+
+`prompts.py` – Specialist prompts (legal, budget, location)
+
+`call_ollama.py` – Ollama client
+
+`properties.csv` – Example property data
+
+`fastapi_wrapper.py` – (Coming soon) API wrapper for n8n
+
+## License
+MIT
