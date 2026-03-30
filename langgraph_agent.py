@@ -1,9 +1,9 @@
 from typing import TypedDict, Literal
 from langgraph.graph import StateGraph, END
+from langgraph.constants import Send
 from tools import search_listings, calculate_total_cost, check_connectivity, check_legal_status
 from prompts import legal_prompt, budget_prompt, location_prompt
 from call_ollama import call_ollama
-import json
 
 class AgentState(TypedDict):
     query: str
@@ -14,7 +14,6 @@ class AgentState(TypedDict):
 
 def legal_node(state: AgentState):
     print("\n⚖️ Entering LEGAL node")
-    # For demo, hardcoded location; could be extracted from query
     location = "Whitefield"
     legal_status = check_legal_status(location)
     prompt = legal_prompt(legal_status, state["query"])
@@ -23,7 +22,6 @@ def legal_node(state: AgentState):
 
 def budget_node(state: AgentState):
     print("\n💰 Entering BUDGET node")
-    # Example budget range – could be dynamic
     listings = search_listings(2, 5, 3)
     if listings:
         top = listings[0]
@@ -61,17 +59,50 @@ def resolver_node(state: AgentState):
 **Conclusion:** Based on the above, review all factors before making a decision."""
     return {"final_answer": final}
 
-def build_graph():
+# ------------------------------------------------------------------
+# Parallel fan‑out
+# ------------------------------------------------------------------
+def fan_out_to_specialists(state: AgentState):
+    return [
+        Send("legal", state),
+        Send("budget", state),
+        Send("location", state),
+    ]
+
+def build_graph(mode: str = "parallel"):
+    """
+    Build a LangGraph that can run specialists sequentially or in parallel.
+    mode = "sequential" or "parallel"
+    """
     graph = StateGraph(AgentState)
+
+    # Add all nodes
     graph.add_node("legal", legal_node)
     graph.add_node("budget", budget_node)
     graph.add_node("location", location_node)
     graph.add_node("resolver", resolver_node)
 
-    graph.set_entry_point("legal")
-    graph.add_edge("legal", "budget")
-    graph.add_edge("budget", "location")
-    graph.add_edge("location", "resolver")
-    graph.add_edge("resolver", END)
+    if mode == "sequential":
+        graph.set_entry_point("legal")
+        graph.add_edge("legal", "budget")
+        graph.add_edge("budget", "location")
+        graph.add_edge("location", "resolver")
+        graph.add_edge("resolver", END)
+
+    elif mode == "parallel":
+        graph.add_node("start", lambda s: s)   # dummy node
+        graph.set_entry_point("start")
+        graph.add_conditional_edges(
+            "start",
+            fan_out_to_specialists,
+            ["legal", "budget", "location"]
+        )
+        graph.add_edge("legal", "resolver")
+        graph.add_edge("budget", "resolver")
+        graph.add_edge("location", "resolver")
+        graph.add_edge("resolver", END)
+
+    else:
+        raise ValueError(f"Unknown mode: {mode}. Use 'sequential' or 'parallel'.")
 
     return graph.compile()

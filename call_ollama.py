@@ -3,7 +3,8 @@ import time
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 MODEL = "phi3:mini"          # or llama3.2:3b
-TIMEOUT = 120
+TIMEOUT = 360
+DEBUG = False
 
 def call_ollama(prompt, node_name="unknown"):
     print(f"🐛 [{node_name}] Calling Ollama...", flush=True)
@@ -15,7 +16,7 @@ def call_ollama(prompt, node_name="unknown"):
                 "model": MODEL,
                 "messages": [{"role": "user", "content": prompt}],
                 "stream": False,
-                "options": {"temperature": 0, "num_predict": 256}
+                "options": {"temperature": 0, "num_predict": 128}
             },
             timeout=TIMEOUT
         )
