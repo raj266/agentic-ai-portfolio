@@ -5,11 +5,8 @@ Implements a **priority‑based** multi‑agent flow (Legal → Budget → Locat
 
 ## Architecture
 
-[User Query] → [Legal Agent] → [Budget Agent] → [Location Agent] → [Resolver] → [Final Answer]
-│ │ │ │
-▼ ▼ ▼ ▼
-legal_tool budget_tool location_tool priority logic
-(CSV) (CSV) (CSV) (legal veto)
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/91a48953-7255-416f-8a71-e3b402b82905" />
+
 
 It visually maps the path from User Query through the agents (Legal, Budget, Location), into the Resolver, and finally down to the Final Answer with clear approval or veto outcomes.
 
