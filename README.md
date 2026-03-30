@@ -1,4 +1,4 @@
-# Agentic AI Portfolio – LangGraph Multi‑Agent System
+# LangGraph Multi‑Agent System
 
 A production‑ready multi‑agent system built with **LangGraph**, **LangSmith**, and **Ollama**.  
 Implements a **priority‑based** multi‑agent flow (Legal → Budget → Location → Resolver) with tool integration, real‑world data (CSV), and legal veto logic. Designed to be extended with enterprise data sources and workflow automation.
