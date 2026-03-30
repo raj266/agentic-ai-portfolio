@@ -57,15 +57,33 @@ Returns: {"final_answer": "...", "elapsed_time": 123.45, "mode_used": "parallel"
 
 - GET /health – health check
 
-## Sample curl (Parallel)
+## Sample curl (Parallel and Sequential)
 
-```curl -X POST http://localhost:8000/agent \
+```
+curl -X POST http://localhost:8000/agent \
   -H "Content-Type: application/json" \
   -d '{"query": "Find me a 3BHK in Whitefield under 5 Crore", "mode": "parallel"}'
 ```
+```
+curl -X POST http://localhost:8000/agent \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Find me a 3BHK in Whitefield under 5 Crore", "mode": "sequential"}'
+```
+
+## Public Demo (ngrok)
+1. Start FastAPI: python fastapi_wrapper.py
+2. In another terminal: ngrok http 8000
+3. Use the provided ngrok URL as your API endpoint.
+
+## Performance Comparison
+
+Parallel execution runs all three specialists concurrently, reducing wall‑clock time from the sum to the maximum of the three.
 
 ## File Structure
+
 `run_agent.py` – Entry point
+
+`fastapi_wrapper.py` – (Coming soon) API wrapper for n8n
 
 `langgraph_agent.py` – Graph definition, nodes, edges
 
@@ -77,7 +95,7 @@ Returns: {"final_answer": "...", "elapsed_time": 123.45, "mode_used": "parallel"
 
 `properties.csv` – Example property data
 
-`fastapi_wrapper.py` – (Coming soon) API wrapper for n8n
+`arch.png` – Architecture diagram
 
 ## License
 MIT
