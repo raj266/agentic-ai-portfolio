@@ -3,7 +3,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.constants import Send
 from tools import search_listings, calculate_total_cost, check_connectivity, check_legal_status
 from prompts import legal_prompt, budget_prompt, location_prompt
-from call_ollama import call_ollama
+# from call_ollama import call_ollama
+from call_groq import call_groq as call_llm
 
 class AgentState(TypedDict):
     query: str
@@ -17,7 +18,7 @@ def legal_node(state: AgentState):
     location = "Whitefield"
     legal_status = check_legal_status(location)
     prompt = legal_prompt(legal_status, state["query"])
-    opinion = call_ollama(prompt, node_name="LEGAL")
+    opinion = call_llm(prompt, node_name="LEGAL")
     return {"legal_opinion": opinion}
 
 def budget_node(state: AgentState):
@@ -30,7 +31,7 @@ def budget_node(state: AgentState):
     else:
         factual = "No properties found in the given budget range."
     prompt = budget_prompt(factual, state["query"])
-    opinion = call_ollama(prompt, node_name="BUDGET")
+    opinion = call_llm(prompt, node_name="BUDGET")
     return {"budget_opinion": opinion}
 
 def location_node(state: AgentState):
@@ -38,7 +39,7 @@ def location_node(state: AgentState):
     location = "Whitefield"
     connectivity = check_connectivity(location)
     prompt = location_prompt(connectivity, state["query"])
-    opinion = call_ollama(prompt, node_name="LOCATION")
+    opinion = call_llm(prompt, node_name="LOCATION")
     return {"location_opinion": opinion}
 
 def resolver_node(state: AgentState):
